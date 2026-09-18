@@ -49,6 +49,29 @@ python -m google_trends_agent.cli --geo KR --limit 5 --output-dir output
 | `--model` | 사용할 Claude 모델 | `claude-sonnet-5` (환경변수 `ANTHROPIC_MODEL`로 변경 가능) |
 | `--dry-run` | 기사 생성 없이 트렌드 목록만 출력 | - |
 
+## Vercel 배포 (웹페이지로 사용하기)
+
+CLI 로직을 그대로 재사용하는 Vercel Python 서버리스 함수(`api/generate.py`)와
+간단한 웹페이지(`index.html`)가 포함되어 있습니다.
+
+1. [vercel.com](https://vercel.com)에서 이 저장소를 Import 합니다. `vercel.json`에 빌드 설정
+   (`api/generate.py` → Python 함수, `index.html` → 정적 파일)이 명시되어 있어 Vercel의
+   프레임워크 자동 감지를 건너뛰고 곧바로 빌드됩니다. Import 시 Framework Preset은
+   "Other"로 두면 됩니다.
+2. 프로젝트 Settings → Environment Variables에 `ANTHROPIC_API_KEY`를 등록합니다.
+3. 배포 후 사이트에 접속해 국가/개수를 선택하고 "기사 생성하기"를 누르면
+   `/api/generate`가 실시간으로 트렌드를 조회하고 기사를 작성해 보여줍니다.
+
+서버리스 함수 기본 실행 시간 제한 때문에 한 번에 생성 가능한 기사는 최대 2건으로
+제한되어 있습니다(`api/generate.py`의 `MAX_LIMIT`). 더 많이 생성하려면 로컬에서
+CLI(`python -m google_trends_agent.cli`)를 사용하세요.
+
+> `Error: No Python entrypoint found. Set "tool.vercel.entrypoint"...` 오류가 난다면,
+> Vercel 프로젝트 Settings → General → Framework Preset이 자동으로 "Python"으로
+> 설정되어 있지 않은지 확인하고 "Other"로 변경한 뒤 재배포하세요. `vercel.json`의
+> `builds` 설정이 있으면 보통 이 자동 감지를 우회하지만, 프로젝트가 이미 다른
+> 프리셋으로 저장된 경우 수동 변경이 필요할 수 있습니다.
+
 ## 테스트
 
 네트워크 호출 없이 RSS 파싱 로직과 프롬프트 구성 로직을 검증하는 단위 테스트가 포함되어 있습니다.
