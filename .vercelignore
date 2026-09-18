@@ -1,0 +1,5 @@
+tests/
+output/*.md
+.venv/
+venv/
+.pytest_cache/
