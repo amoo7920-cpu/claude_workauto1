@@ -1,8 +1,8 @@
 """Vercel Python 서버리스 함수: 구글 트렌드 상세 기사 API.
 
-GET /api/generate?geo=KR&limit=3
+GET /api/generate?geo=KR&limit=2
   - geo: 국가 코드 (기본값 KR)
-  - limit: 가져올 트렌드 개수 (1~3, 서버리스 실행 시간 제한 때문에 최대 3으로 제한)
+  - limit: 가져올 트렌드 개수 (1~2, 서버리스 함수 기본 실행 시간 제한 때문에 최대 2로 제한)
 """
 
 from __future__ import annotations
@@ -19,7 +19,7 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from google_trends_agent.article_writer import write_article  # noqa: E402
 from google_trends_agent.trends_fetcher import TrendTopic, fetch_trending_topics  # noqa: E402
 
-MAX_LIMIT = 3
+MAX_LIMIT = 2
 
 
 def _topic_to_dict(topic: TrendTopic, article: str) -> dict:
@@ -51,9 +51,9 @@ class handler(BaseHTTPRequestHandler):  # noqa: N801 - Vercel Python 런타임 �
         query = parse_qs(urlparse(self.path).query)
         geo = query.get("geo", ["KR"])[0]
         try:
-            limit = int(query.get("limit", ["3"])[0])
+            limit = int(query.get("limit", [str(MAX_LIMIT)])[0])
         except ValueError:
-            limit = 3
+            limit = MAX_LIMIT
 
         try:
             payload = build_response(geo, limit)
