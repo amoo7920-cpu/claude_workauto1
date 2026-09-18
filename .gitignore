@@ -5,4 +5,7 @@ venv/
 .env
 output/*.md
 !output/.gitkeep
+!output/01_한미약품-에페-비만치료제.md
+!output/02_이재명-대통령-기자회견.md
+!output/03_엔비디아-주가-상승.md
 .pytest_cache/
